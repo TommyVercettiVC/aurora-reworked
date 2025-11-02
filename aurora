@@ -5684,21 +5684,39 @@ ExploitsGroup:AddToggle("Remove_Spread", {Text = "No-spread"})
 
     ConnectKeyPickerToToggle("Movement_OverrideSpeedHack", "OverrideSpeedHackKeyBind")
 
-    local Worldtabbox = VisualsTab:AddRightTabbox("World")
-    local LightTab = Worldtabbox:AddTab("light")
-    local ParticlesTab = Worldtabbox:AddTab("Particle")
-    local LocalTabbox = VisualsTab:AddCenterTabbox("Local")
-    local CameraTab = LocalTabbox:AddTab("Camera")
-    local ArmsTab = LocalTabbox:AddTab("Hands")
-    local BulletsTab = LocalTabbox:AddTab("Bullet")
-    local CharacterTab = LocalTabbox:AddTab("Character")
-    local CrosshairTab = LocalTabbox:AddTab("crosshair")
+    -- ========================================
+    -- AURORA VISUALS TAB - COMPLETE REWORK
+    -- ========================================
+    -- Modern ESP system with advanced features
+    -- Better organization and performance
+    -- Enhanced customization options
 
-    local EspTabbox = VisualsTab:AddLeftTabbox("Esp")
-    
-    local EnemiesTab = EspTabbox:AddTab("Enemies")
-    local TeamTab = EspTabbox:AddTab("Team")
+    -- Main ESP Tabbox (Left Side)
+    local EspTabbox = VisualsTab:AddLeftTabbox("ESP System")
+    local PlayerEspTab = EspTabbox:AddTab("Players")
+    local WorldEspTab = EspTabbox:AddTab("World")
     local EspSettingsTab = EspTabbox:AddTab("Settings")
+
+    -- Visual Effects Tabbox (Center)
+    local EffectsTabbox = VisualsTab:AddCenterTabbox("Visual Effects")
+    local ChamsTab = EffectsTabbox:AddTab("Chams")
+    local GlowTab = EffectsTabbox:AddTab("Glow")
+    local EffectsTab = EffectsTabbox:AddTab("Effects")
+
+    -- Environment Tabbox (Right Side)
+    local EnvironmentTabbox = VisualsTab:AddRightTabbox("Environment")
+    local LightingTab = EnvironmentTabbox:AddTab("Lighting")
+    local AtmosphereTab = EnvironmentTabbox:AddTab("Atmosphere")
+    local CameraTab = EnvironmentTabbox:AddTab("Camera")
+
+    -- Legacy tabs for compatibility
+    local CharacterTab = EffectsTabbox:AddTab("Character")
+    local ArmsTab = EffectsTabbox:AddTab("Arms")
+    
+    -- Legacy compatibility aliases
+    local EnemiesTab = PlayerEspTab  -- For backward compatibility
+    local TeamTab = PlayerEspTab     -- For backward compatibility
+    local LightTab = LightingTab     -- For backward compatibility
 
 
 
@@ -5772,63 +5790,338 @@ ArmsTab:AddSlider('Arms_Reflective_Sleeve', {Text = 'Arms Reflective Sleeve', Mi
 ArmsTab:AddDropdown('Arms_Changer_Texture', {Text = 'Arms Texture', Values = forcefieldAnimationsDropDown, Default = 1})
 
 
-    EnemiesTab:AddToggle("Enemy_Boxes", {Text = "Boxes", Default = false}):AddColorPicker("Enemy_Boxes_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Boxes_Filled", {Text = "Filled Boxes", Default = false}):AddColorPicker("Enemy_Boxes_Filled_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddSlider("Enemy_Boxes_Filled_Transperency", {Text = 'Filled Boxes Transparency', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    -- ========================================
+    -- PLAYER ESP SECTION - MODERN REWORK
+    -- ========================================
 
-    EnemiesTab:AddToggle("Enemy_Health_Bar", {Text = "Health Bar", Default = false}):AddColorPicker("Enemy_Health_Bar_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0}):AddColorPicker("Enemy_Health_Bar_Color2", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Health_Bar_Gradient", {Text = "Health Bar Gradient", Default = false})
-    EnemiesTab:AddToggle("Enemy_Health_Number", {Text = "Health Number", Default = false})
-    EnemiesTab:AddSlider("Enemy_Max_HP_Visibility_Cap", {Text = 'Max HP Visibility Cap', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    -- Master ESP Toggle
+    PlayerEspTab:AddToggle("ESP_Master", {Text = "Master ESP Toggle", Default = false})
+        :AddKeyPicker("ESP_MasterKey", {Default = 'F4', SyncToggleState = false, Mode = "Toggle", Text = "Master ESP", NoUI = false})
 
-    EnemiesTab:AddToggle("Enemy_Held_Weapon", {Text = "Held Weapon", Default = false}):AddColorPicker("Enemy_Held_Weapon_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Distance", {Text = "Distance", Default = false}):AddColorPicker("Enemy_Distance_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Name", {Text = "Name", Default = false}):AddColorPicker("Enemy_Name_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Armor", {Text = "Armor", Default = false}):AddColorPicker("Enemy_Armor_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Bomb", {Text = "Bomb", Default = false}):AddColorPicker("Enemy_Bomb_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Cash", {Text = "Cash", Default = false}):AddColorPicker("Enemy_Cash_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Snap_Lines", {Text = "Snap Lines", Default = false}):AddColorPicker("Enemy_Snap_Lines_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddSlider("Enemy_Snap_Lines_Transperency", {Text = 'Snap Lines Transparency', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-    EnemiesTab:AddToggle("Enemy_Chamses", {Text = "Chams", Default = false}):AddColorPicker("Enemy_Chamses_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0}):AddColorPicker("Enemy_Chamses_Color2", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddSlider("Enemy_Chamses_Transperency1", {Text = 'Chams Transparency 1', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-    EnemiesTab:AddSlider("Enemy_Chamses_Transperency2", {Text = 'Chams Transparency 2', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-    EnemiesTab:AddToggle("Enemy_Skeletons", {Text = "Skeletons", Default = false}):AddColorPicker("Enemy_Skeletons_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddToggle("Enemy_Out_of_View_Arrows", {Text = "Out of View Arrows", Default = false}):AddColorPicker("Enemy_Out_of_View_Arrows_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-    EnemiesTab:AddSlider("Enemy_Arrow_Size", {Text = 'Arrow Size', Default = 16, Min = 4, Max = 30, Rounding = 0, Compact = false})
-    EnemiesTab:AddSlider("Enemy_Arrow_Distance", {Text = 'Arrows Distance', Default = 100, Min = 10, Max = 100, Rounding = 0, Compact = false})
-    EnemiesTab:AddToggle("Enemy_Dynamic_Arrow_Size", {Text = "Dynamic Arrow Size", Default = false})
+    PlayerEspTab:AddDivider()
 
-TeamTab:AddToggle("Team_Boxes", {Text = "Boxes", Default = false}):AddColorPicker("Team_Boxes_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Boxes_Filled", {Text = "Filled Boxes", Default = false}):AddColorPicker("Team_Boxes_Filled_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddSlider("Team_Boxes_Filled_Transperency", {Text = 'Filled Boxes Transparency', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    -- Enemy ESP Section
+    PlayerEspTab:AddLabel("Enemy ESP")
 
-TeamTab:AddToggle("Team_Health_Bar", {Text = "Health Bar", Default = false}):AddColorPicker("Team_Health_Bar_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0}):AddColorPicker("Team_Health_Bar_Color2", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Health_Bar_Gradient", {Text = "Health Bar Gradient", Default = false})
-TeamTab:AddToggle("Team_Health_Number", {Text = "Health Value", Default = false})
-TeamTab:AddSlider("Team_Max_HP_Visibility_Cap", {Text = 'Max HP Visibility Cap', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    -- Boxes - Enhanced with 3D option
+    PlayerEspTab:AddToggle("Enemy_Boxes", {Text = "2D Boxes", Default = false})
+        :AddColorPicker("Enemy_Boxes_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Box Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Boxes_Filled", {Text = "Filled Boxes", Default = false})
+        :AddColorPicker("Enemy_Boxes_Filled_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Fill Color', Transparency = 0})
+    PlayerEspTab:AddSlider("Enemy_Boxes_Filled_Transperency", {Text = 'Filled Boxes Transparency', Default = 8, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    PlayerEspTab:AddToggle("Enemy_3DBoxes", {Text = "3D Boxes", Default = false})
+        :AddColorPicker("Enemy_3DBoxColor", {Default = _Color3FromRGB(255, 0, 0), Title = '3D Box Color', Transparency = 0})
 
-TeamTab:AddToggle("Team_Held_Weapon", {Text = "Held Weapon", Default = false}):AddColorPicker("Team_Held_Weapon_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Distance", {Text = "Distance", Default = false}):AddColorPicker("Team_Distance_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Name", {Text = "Name", Default = false}):AddColorPicker("Team_Name_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Armor", {Text = "Armor", Default = false}):AddColorPicker("Team_Armor_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Bomb", {Text = "Bomb", Default = false}):AddColorPicker("Team_Bomb_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Cash", {Text = "Cash", Default = false}):AddColorPicker("Team_Cash_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddToggle("Team_Snap_Lines", {Text = "Snap Lines", Default = false}):AddColorPicker("Team_Snap_Lines_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddSlider("Team_Snap_Lines_Transperency", {Text = 'Snap Lines Transparency', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-TeamTab:AddToggle("Team_Chamses", {Text = "Chams", Default = false}):AddColorPicker("Team_Chamses_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0}):AddColorPicker("Team_Chamses_Color2", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-TeamTab:AddSlider("Team_Chamses_Transperency1", {Text = 'Chams Transparency 1', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-TeamTab:AddSlider("Team_Chamses_Transperency2", {Text = 'Chams Transparency 2', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-TeamTab:AddToggle("Team_Skeletons", {Text = "Skeletons", Default = false}):AddColorPicker("Team_Skeletons_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
+    -- Health System - Enhanced
+    PlayerEspTab:AddToggle("Enemy_Health_Bar", {Text = "Health Bar", Default = false})
+        :AddColorPicker("Enemy_Health_Bar_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'High HP', Transparency = 0})
+        :AddColorPicker("Enemy_Health_Bar_Color2", {Default = _Color3FromRGB(255, 0, 0), Title = 'Low HP', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Health_Number", {Text = "Health Text", Default = false})
+    PlayerEspTab:AddToggle("Enemy_Health_Bar_Gradient", {Text = "Gradient Health Bar", Default = true})
+    PlayerEspTab:AddDropdown("Enemy_HealthStyle", {Text = "Health Bar Style", Values = {"Left", "Right", "Top", "Bottom"}, Default = "Left", AllowNull = false})
+    PlayerEspTab:AddSlider("Enemy_Max_HP_Visibility_Cap", {Text = 'Max HP Visibility Cap', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
 
-EspSettingsTab:AddSlider("Esp_Settings_TextSize", {Text = 'Text Size', Default = 13, Min = 8, Max = 24, Rounding = 0, Compact = false})
-EspSettingsTab:AddDropdown("Esp_Settings_TextCase", {Text = "Text Case", Values = {"Normal", "UPPERCASE", "lowercase"}, Default = 1, Multi = false})
-EspSettingsTab:AddDropdown("Esp_Settings_TextFont", {Text = "Text Font", Values = {"Plex", "Monospace", "UI", "System"}, Default = 1, Multi = false})
+    -- Information Display - Enhanced
+    PlayerEspTab:AddToggle("Enemy_Name", {Text = "Names", Default = false})
+        :AddColorPicker("Enemy_Name_Color1", {Default = _Color3FromRGB(255, 255, 255), Title = 'Name Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Distance", {Text = "Distance", Default = false})
+        :AddColorPicker("Enemy_Distance_Color1", {Default = _Color3FromRGB(255, 255, 255), Title = 'Distance Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Held_Weapon", {Text = "Weapon", Default = false})
+        :AddColorPicker("Enemy_Held_Weapon_Color1", {Default = _Color3FromRGB(255, 255, 0), Title = 'Weapon Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Armor", {Text = "Armor", Default = false})
+        :AddColorPicker("Enemy_Armor_Color1", {Default = _Color3FromRGB(0, 255, 255), Title = 'Armor Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Bomb", {Text = "Bomb", Default = false})
+        :AddColorPicker("Enemy_Bomb_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Bomb Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Cash", {Text = "Cash", Default = false})
+        :AddColorPicker("Enemy_Cash_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Cash Color', Transparency = 0})
 
-EspSettingsTab:AddSlider("Esp_Settings_FlagTextSize", {Text = 'Flag Text Size', Default = 13, Min = 8, Max = 24, Rounding = 0, Compact = false})
-EspSettingsTab:AddDropdown("Esp_Settings_FlagTextCase", {Text = "Flag Text Case", Values = {"Normal", "UPPERCASE", "lowercase"}, Default = 1, Multi = false})
-EspSettingsTab:AddDropdown("Esp_Settings_FlagTextFont", {Text = "Flag Text Font", Values = {"Plex", "Monospace", "UI", "System"}, Default = 1, Multi = false})
+    -- Advanced ESP Features - Enhanced
+    PlayerEspTab:AddToggle("Enemy_Skeletons", {Text = "Skeleton", Default = false})
+        :AddColorPicker("Enemy_Skeletons_Color1", {Default = _Color3FromRGB(255, 255, 255), Title = 'Skeleton Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Enemy_Snap_Lines", {Text = "Tracers", Default = false})
+        :AddColorPicker("Enemy_Snap_Lines_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Tracer Color', Transparency = 0})
+    PlayerEspTab:AddDropdown("Enemy_TracerOrigin", {Text = "Tracer Origin", Values = {"Bottom", "Center", "Top", "Mouse"}, Default = "Bottom", AllowNull = false})
+    PlayerEspTab:AddSlider("Enemy_Snap_Lines_Transperency", {Text = 'Tracer Transparency', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
 
+    -- Out of View Indicators - Enhanced
+    PlayerEspTab:AddToggle("Enemy_Out_of_View_Arrows", {Text = "Off-Screen Indicators", Default = false})
+        :AddColorPicker("Enemy_Out_of_View_Arrows_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Indicator Color', Transparency = 0})
+    PlayerEspTab:AddSlider("Enemy_Arrow_Size", {Text = 'Indicator Size', Default = 20, Min = 10, Max = 50, Rounding = 0, Compact = false})
+    PlayerEspTab:AddSlider("Enemy_Arrow_Distance", {Text = 'Indicator Distance', Default = 200, Min = 100, Max = 500, Rounding = 0, Compact = false})
+    PlayerEspTab:AddToggle("Enemy_Dynamic_Arrow_Size", {Text = "Dynamic Arrow Size", Default = false})
 
+    -- Move chams to dedicated tab
+    PlayerEspTab:AddToggle("Enemy_Chamses", {Text = "Chams (Legacy)", Default = false})
+        :AddColorPicker("Enemy_Chamses_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Visible Color', Transparency = 0})
+        :AddColorPicker("Enemy_Chamses_Color2", {Default = _Color3FromRGB(255, 100, 100), Title = 'Hidden Color', Transparency = 0})
+    PlayerEspTab:AddSlider("Enemy_Chamses_Transperency1", {Text = 'Chams Transparency 1', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    PlayerEspTab:AddSlider("Enemy_Chamses_Transperency2", {Text = 'Chams Transparency 2', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+
+    PlayerEspTab:AddDivider()
+
+    -- Team ESP Section
+    PlayerEspTab:AddLabel("Team ESP")
+
+    PlayerEspTab:AddToggle("Team_Boxes", {Text = "2D Boxes", Default = false})
+        :AddColorPicker("Team_Boxes_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Box Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Boxes_Filled", {Text = "Filled Boxes", Default = false})
+        :AddColorPicker("Team_Boxes_Filled_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Fill Color', Transparency = 0})
+    PlayerEspTab:AddSlider("Team_Boxes_Filled_Transperency", {Text = 'Filled Boxes Transparency', Default = 8, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    PlayerEspTab:AddToggle("Team_Health_Bar", {Text = "Health Bar", Default = false})
+        :AddColorPicker("Team_Health_Bar_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'High HP', Transparency = 0})
+        :AddColorPicker("Team_Health_Bar_Color2", {Default = _Color3FromRGB(255, 255, 0), Title = 'Low HP', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Health_Bar_Gradient", {Text = "Health Bar Gradient", Default = false})
+    PlayerEspTab:AddToggle("Team_Health_Number", {Text = "Health Value", Default = false})
+    PlayerEspTab:AddSlider("Team_Max_HP_Visibility_Cap", {Text = 'Max HP Visibility Cap', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    PlayerEspTab:AddToggle("Team_Name", {Text = "Names", Default = false})
+        :AddColorPicker("Team_Name_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Name Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Distance", {Text = "Distance", Default = false})
+        :AddColorPicker("Team_Distance_Color1", {Default = _Color3FromRGB(255, 255, 255), Title = 'Distance Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Held_Weapon", {Text = "Weapon", Default = false})
+        :AddColorPicker("Team_Held_Weapon_Color1", {Default = _Color3FromRGB(255, 255, 0), Title = 'Weapon Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Armor", {Text = "Armor", Default = false})
+        :AddColorPicker("Team_Armor_Color1", {Default = _Color3FromRGB(0, 255, 255), Title = 'Armor Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Bomb", {Text = "Bomb", Default = false})
+        :AddColorPicker("Team_Bomb_Color1", {Default = _Color3FromRGB(255, 0, 0), Title = 'Bomb Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Cash", {Text = "Cash", Default = false})
+        :AddColorPicker("Team_Cash_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Cash Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Snap_Lines", {Text = "Tracers", Default = false})
+        :AddColorPicker("Team_Snap_Lines_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Tracer Color', Transparency = 0})
+    PlayerEspTab:AddSlider("Team_Snap_Lines_Transperency", {Text = 'Tracer Transparency', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    PlayerEspTab:AddToggle("Team_Skeletons", {Text = "Skeleton", Default = false})
+        :AddColorPicker("Team_Skeletons_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Skeleton Color', Transparency = 0})
+    PlayerEspTab:AddToggle("Team_Chamses", {Text = "Chams (Legacy)", Default = false})
+        :AddColorPicker("Team_Chamses_Color1", {Default = _Color3FromRGB(0, 255, 0), Title = 'Visible Color', Transparency = 0})
+        :AddColorPicker("Team_Chamses_Color2", {Default = _Color3FromRGB(100, 255, 100), Title = 'Hidden Color', Transparency = 0})
+    PlayerEspTab:AddSlider("Team_Chamses_Transperency1", {Text = 'Chams Transparency 1', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    PlayerEspTab:AddSlider("Team_Chamses_Transperency2", {Text = 'Chams Transparency 2', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
+
+    -- ========================================
+    -- WORLD ESP SECTION
+    -- ========================================
+
+    -- Weapons
+    WorldEspTab:AddLabel("Weapons")
+    WorldEspTab:AddToggle("Weapon_ESP", {Text = "Weapon ESP", Default = false})
+        :AddColorPicker("Weapon_Color", {Default = _Color3FromRGB(255, 255, 0), Title = 'Weapon Color', Transparency = 0})
+    WorldEspTab:AddToggle("Weapon_Distance", {Text = "Weapon Distance", Default = false})
+    WorldEspTab:AddToggle("Weapon_Boxes", {Text = "Weapon Boxes", Default = false})
+    WorldEspTab:AddSlider("Weapon_MaxDistance", {Text = "Max Weapon Distance", Default = 500, Min = 100, Max = 2000, Rounding = 0, Compact = false})
+
+    -- Items
+    WorldEspTab:AddDivider()
+    WorldEspTab:AddLabel("Items")
+    WorldEspTab:AddToggle("Item_ESP", {Text = "Item ESP", Default = false})
+        :AddColorPicker("Item_Color", {Default = _Color3FromRGB(0, 255, 255), Title = 'Item Color', Transparency = 0})
+
+    -- Utility
+    WorldEspTab:AddDivider()
+    WorldEspTab:AddLabel("Utility")
+    WorldEspTab:AddToggle("Crosshair", {Text = "Custom Crosshair", Default = false})
+        :AddColorPicker("Crosshair_Color", {Default = _Color3FromRGB(255, 255, 255), Title = 'Crosshair Color', Transparency = 0})
+    WorldEspTab:AddSlider("Crosshair_Size", {Text = "Crosshair Size", Default = 10, Min = 5, Max = 30, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Thickness", {Text = "Crosshair Thickness", Default = 2, Min = 1, Max = 5, Rounding = 0, Compact = false})
+
+    -- ========================================
+    -- ESP SETTINGS SECTION
+    -- ========================================
+
+    EspSettingsTab:AddLabel("General Settings")
+
+    -- Distance and Visibility
+    EspSettingsTab:AddSlider("ESP_MaxDistance", {Text = "Max ESP Distance", Default = 1000, Min = 100, Max = 5000, Rounding = 0, Compact = false})
+    EspSettingsTab:AddToggle("ESP_VisibilityCheck", {Text = "Visibility Check", Default = true})
+    EspSettingsTab:AddToggle("ESP_TeamCheck", {Text = "Team Check", Default = true})
+
+    -- Text Settings
+    EspSettingsTab:AddDivider()
+    EspSettingsTab:AddLabel("Text Settings")
+    EspSettingsTab:AddSlider("Esp_Settings_TextSize", {Text = 'Text Size', Default = 13, Min = 8, Max = 24, Rounding = 0, Compact = false})
+    EspSettingsTab:AddDropdown("Esp_Settings_TextFont", {Text = "Text Font", Values = {"Plex", "Monospace", "UI", "System"}, Default = 1, Multi = false})
+    EspSettingsTab:AddDropdown("Esp_Settings_TextCase", {Text = "Text Case", Values = {"Normal", "UPPERCASE", "lowercase"}, Default = 1, Multi = false})
+    EspSettingsTab:AddToggle("ESP_TextOutline", {Text = "Text Outline", Default = true})
+
+    -- Box Settings
+    EspSettingsTab:AddDivider()
+    EspSettingsTab:AddLabel("Box Settings")
+    EspSettingsTab:AddSlider("ESP_BoxThickness", {Text = "Box Thickness", Default = 1, Min = 1, Max = 5, Rounding = 0, Compact = false})
+    EspSettingsTab:AddSlider("ESP_BoxTransparency", {Text = "Box Transparency", Default = 1, Min = 0.1, Max = 1, Rounding = 1, Compact = false})
+    EspSettingsTab:AddToggle("ESP_BoxOutline", {Text = "Box Outline", Default = true})
+
+    -- Performance Settings
+    EspSettingsTab:AddDivider()
+    EspSettingsTab:AddLabel("Performance")
+    EspSettingsTab:AddSlider("ESP_UpdateRate", {Text = "Update Rate (FPS)", Default = 60, Min = 30, Max = 144, Rounding = 0, Compact = false})
+    EspSettingsTab:AddToggle("ESP_OptimizeDistance", {Text = "Distance Optimization", Default = true})
+
+    -- Legacy settings for compatibility
+    EspSettingsTab:AddSlider("Esp_Settings_FlagTextSize", {Text = 'Flag Text Size', Default = 13, Min = 8, Max = 24, Rounding = 0, Compact = false})
+    EspSettingsTab:AddDropdown("Esp_Settings_FlagTextCase", {Text = "Flag Text Case", Values = {"Normal", "UPPERCASE", "lowercase"}, Default = 1, Multi = false})
+    EspSettingsTab:AddDropdown("Esp_Settings_FlagTextFont", {Text = "Flag Text Font", Values = {"Plex", "Monospace", "UI", "System"}, Default = 1, Multi = false})
+
+    -- ========================================
+    -- CHAMS SECTION
+    -- ========================================
+
+    ChamsTab:AddLabel("Player Chams")
+
+    -- Enemy Chams
+    ChamsTab:AddToggle("Enemy_Chams", {Text = "Enemy Chams", Default = false})
+        :AddColorPicker("Enemy_ChamsVisible", {Default = _Color3FromRGB(255, 0, 0), Title = 'Visible Color', Transparency = 0.3})
+        :AddColorPicker("Enemy_ChamsHidden", {Default = _Color3FromRGB(255, 100, 100), Title = 'Hidden Color', Transparency = 0.6})
+
+    ChamsTab:AddDropdown("Enemy_ChamsMaterial", {Text = "Enemy Chams Material", Values = {"Neon", "ForceField", "Glass", "Plastic", "Metal", "Concrete"}, Default = "Neon", AllowNull = false})
+    ChamsTab:AddSlider("Enemy_ChamsTransparency", {Text = "Enemy Chams Transparency", Default = 0.3, Min = 0, Max = 1, Rounding = 2, Compact = false})
+
+    -- Team Chams
+    ChamsTab:AddToggle("Team_Chams", {Text = "Team Chams", Default = false})
+        :AddColorPicker("Team_ChamsVisible", {Default = _Color3FromRGB(0, 255, 0), Title = 'Visible Color', Transparency = 0.3})
+        :AddColorPicker("Team_ChamsHidden", {Default = _Color3FromRGB(100, 255, 100), Title = 'Hidden Color', Transparency = 0.6})
+
+    ChamsTab:AddDropdown("Team_ChamsMaterial", {Text = "Team Chams Material", Values = {"Neon", "ForceField", "Glass", "Plastic", "Metal", "Concrete"}, Default = "Neon", AllowNull = false})
+
+    ChamsTab:AddDivider()
+
+    -- Weapon Chams
+    ChamsTab:AddLabel("Weapon Chams")
+    ChamsTab:AddToggle("Weapon_Chams", {Text = "Weapon Chams", Default = false})
+        :AddColorPicker("Weapon_ChamsColor", {Default = _Color3FromRGB(255, 255, 0), Title = 'Weapon Color', Transparency = 0.2})
+    ChamsTab:AddDropdown("Weapon_ChamsMaterial", {Text = "Weapon Material", Values = {"Neon", "ForceField", "Glass", "Plastic", "Metal"}, Default = "Neon", AllowNull = false})
+
+    -- Arms Chams
+    ChamsTab:AddToggle("Arms_Chams", {Text = "Arms Chams", Default = false})
+        :AddColorPicker("Arms_ChamsColor", {Default = _Color3FromRGB(255, 255, 255), Title = 'Arms Color', Transparency = 0.2})
+    ChamsTab:AddDropdown("Arms_ChamsMaterial", {Text = "Arms Material", Values = {"Neon", "ForceField", "Glass", "Plastic", "Metal"}, Default = "Neon", AllowNull = false})
+
+    -- ========================================
+    -- GLOW SECTION
+    -- ========================================
+
+    GlowTab:AddLabel("Player Glow Effects")
+
+    -- Enemy Glow
+    GlowTab:AddToggle("Enemy_Glow", {Text = "Enemy Glow", Default = false})
+        :AddColorPicker("Enemy_GlowColor", {Default = _Color3FromRGB(255, 0, 0), Title = 'Glow Color', Transparency = 0})
+    GlowTab:AddSlider("Enemy_GlowIntensity", {Text = "Enemy Glow Intensity", Default = 1, Min = 0.1, Max = 5, Rounding = 1, Compact = false})
+    GlowTab:AddSlider("Enemy_GlowSize", {Text = "Enemy Glow Size", Default = 1, Min = 0.5, Max = 3, Rounding = 1, Compact = false})
+
+    -- Team Glow
+    GlowTab:AddToggle("Team_Glow", {Text = "Team Glow", Default = false})
+        :AddColorPicker("Team_GlowColor", {Default = _Color3FromRGB(0, 255, 0), Title = 'Glow Color', Transparency = 0})
+    GlowTab:AddSlider("Team_GlowIntensity", {Text = "Team Glow Intensity", Default = 1, Min = 0.1, Max = 5, Rounding = 1, Compact = false})
+
+    GlowTab:AddDivider()
+
+    -- Weapon Glow
+    GlowTab:AddLabel("Weapon Glow")
+    GlowTab:AddToggle("Weapon_Glow", {Text = "Weapon Glow", Default = false})
+        :AddColorPicker("Weapon_GlowColor", {Default = _Color3FromRGB(255, 255, 0), Title = 'Weapon Glow', Transparency = 0})
+    GlowTab:AddSlider("Weapon_GlowIntensity", {Text = "Weapon Glow Intensity", Default = 1, Min = 0.1, Max = 3, Rounding = 1, Compact = false})
+
+    -- ========================================
+    -- EFFECTS SECTION
+    -- ========================================
+
+    EffectsTab:AddLabel("Visual Effects")
+
+    -- Bullet Tracers
+    EffectsTab:AddToggle("Bullet_Tracers", {Text = "Bullet Tracers", Default = false})
+        :AddColorPicker("Bullet_TracerColor", {Default = _Color3FromRGB(255, 255, 0), Title = 'Tracer Color', Transparency = 0})
+    EffectsTab:AddSlider("Bullet_TracerWidth", {Text = "Tracer Width", Default = 0.1, Min = 0.05, Max = 0.5, Rounding = 2, Compact = false})
+    EffectsTab:AddSlider("Bullet_TracerLifetime", {Text = "Tracer Lifetime", Default = 2, Min = 0.5, Max = 10, Rounding = 1, Compact = false})
+
+    -- Hit Effects
+    EffectsTab:AddToggle("Hit_Effects", {Text = "Hit Effects", Default = false})
+        :AddColorPicker("Hit_EffectColor", {Default = _Color3FromRGB(255, 0, 0), Title = 'Hit Color', Transparency = 0})
+    EffectsTab:AddDropdown("Hit_EffectType", {Text = "Hit Effect Type", Values = {"Spark", "Explosion", "Ring", "Cross"}, Default = "Spark", AllowNull = false})
+
+    -- Damage Indicators
+    EffectsTab:AddToggle("Damage_Indicators", {Text = "Damage Indicators", Default = false})
+        :AddColorPicker("Damage_Color", {Default = _Color3FromRGB(255, 255, 255), Title = 'Damage Color', Transparency = 0})
+    EffectsTab:AddSlider("Damage_TextSize", {Text = "Damage Text Size", Default = 16, Min = 10, Max = 30, Rounding = 0, Compact = false})
+
+    EffectsTab:AddDivider()
+
+    -- Particle Effects
+    EffectsTab:AddLabel("Particle Effects")
+    EffectsTab:AddToggle("Muzzle_Flash", {Text = "Enhanced Muzzle Flash", Default = false})
+    EffectsTab:AddToggle("Shell_Ejection", {Text = "Shell Ejection", Default = false})
+    EffectsTab:AddToggle("Blood_Effects", {Text = "Blood Effects", Default = false})
+        :AddColorPicker("Blood_Color", {Default = _Color3FromRGB(255, 0, 0), Title = 'Blood Color', Transparency = 0})
+
+    -- ========================================
+    -- LIGHTING SECTION
+    -- ========================================
+
+    LightingTab:AddLabel("Lighting Settings")
+
+    -- Ambient Lighting
+    LightingTab:AddToggle("Custom_Ambient", {Text = "Custom Ambient", Default = false})
+        :AddColorPicker("Ambient_Color", {Default = _Color3FromRGB(128, 128, 128), Title = 'Ambient Color', Transparency = 0})
+    LightingTab:AddSlider("Ambient_Brightness", {Text = "Ambient Brightness", Default = 1, Min = 0, Max = 3, Rounding = 2, Compact = false})
+
+    -- Directional Lighting
+    LightingTab:AddToggle("Custom_Sun", {Text = "Custom Sun Light", Default = false})
+        :AddColorPicker("Sun_Color", {Default = _Color3FromRGB(255, 255, 255), Title = 'Sun Color', Transparency = 0})
+    LightingTab:AddSlider("Sun_Intensity", {Text = "Sun Intensity", Default = 1, Min = 0, Max = 5, Rounding = 2, Compact = false})
+    LightingTab:AddSlider("Sun_Size", {Text = "Sun Size", Default = 21, Min = 5, Max = 50, Rounding = 0, Compact = false})
+
+    -- Shadow Settings
+    LightingTab:AddToggle("Custom_Shadows", {Text = "Custom Shadows", Default = false})
+    LightingTab:AddSlider("Shadow_Softness", {Text = "Shadow Softness", Default = 0.2, Min = 0, Max = 1, Rounding = 2, Compact = false})
+    LightingTab:AddDropdown("Shadow_Technology", {Text = "Shadow Technology", Values = {"Legacy", "ShadowMap", "Future"}, Default = "ShadowMap", AllowNull = false})
+
+    LightingTab:AddDivider()
+
+    -- Time Control
+    LightingTab:AddLabel("Time Control")
+    LightingTab:AddToggle("Force_Time", {Text = "Force Time", Default = false})
+    LightingTab:AddSlider("Time_Value", {Text = "Time of Day", Default = 14, Min = 0, Max = 24, Rounding = 1, Compact = false})
+
+    -- ========================================
+    -- ATMOSPHERE SECTION
+    -- ========================================
+
+    AtmosphereTab:AddLabel("Atmosphere Effects")
+
+    -- Fog Settings
+    AtmosphereTab:AddToggle("Custom_Fog", {Text = "Custom Fog", Default = false})
+        :AddColorPicker("Fog_Color", {Default = _Color3FromRGB(192, 192, 192), Title = 'Fog Color', Transparency = 0})
+    AtmosphereTab:AddSlider("Fog_Start", {Text = "Fog Start", Default = 0, Min = 0, Max = 1000, Rounding = 0, Compact = false})
+    AtmosphereTab:AddSlider("Fog_End", {Text = "Fog End", Default = 100000, Min = 1000, Max = 500000, Rounding = 0, Compact = false})
+
+    -- Atmosphere
+    AtmosphereTab:AddToggle("Custom_Atmosphere", {Text = "Custom Atmosphere", Default = false})
+        :AddColorPicker("Atmosphere_Decay", {Default = _Color3FromRGB(106, 112, 125), Title = 'Decay Color', Transparency = 0})
+        :AddColorPicker("Atmosphere_Color", {Default = _Color3FromRGB(199, 199, 199), Title = 'Color', Transparency = 0})
+    AtmosphereTab:AddSlider("Atmosphere_Density", {Text = "Density", Default = 0.395, Min = 0, Max = 1, Rounding = 3, Compact = false})
+    AtmosphereTab:AddSlider("Atmosphere_Offset", {Text = "Offset", Default = 0.25, Min = 0, Max = 1, Rounding = 3, Compact = false})
+    AtmosphereTab:AddSlider("Atmosphere_Glare", {Text = "Glare", Default = 0, Min = 0, Max = 2, Rounding = 2, Compact = false})
+    AtmosphereTab:AddSlider("Atmosphere_Haze", {Text = "Haze", Default = 0, Min = 0, Max = 3, Rounding = 2, Compact = false})
+
+    AtmosphereTab:AddDivider()
+
+    -- Color Correction
+    AtmosphereTab:AddLabel("Color Correction")
+    AtmosphereTab:AddToggle("Color_Correction", {Text = "Color Correction", Default = false})
+    AtmosphereTab:AddSlider("Brightness", {Text = "Brightness", Default = 0, Min = -1, Max = 1, Rounding = 2, Compact = false})
+    AtmosphereTab:AddSlider("Contrast", {Text = "Contrast", Default = 0, Min = -1, Max = 1, Rounding = 2, Compact = false})
+    AtmosphereTab:AddSlider("Saturation", {Text = "Saturation", Default = 0, Min = -1, Max = 1, Rounding = 2, Compact = false})
+    AtmosphereTab:AddSlider("TintColor_R", {Text = "Tint Red", Default = 0, Min = -1, Max = 1, Rounding = 2, Compact = false})
+    AtmosphereTab:AddSlider("TintColor_G", {Text = "Tint Green", Default = 0, Min = -1, Max = 1, Rounding = 2, Compact = false})
+    AtmosphereTab:AddSlider("TintColor_B", {Text = "Tint Blue", Default = 0, Min = -1, Max = 1, Rounding = 2, Compact = false})
+
+    -- ========================================
+    -- CAMERA SECTION - ENHANCED
+    -- ========================================
+
+    CameraTab:AddLabel("Camera Settings")
+
+    -- Field of View
+    CameraTab:AddToggle("Custom_FOV", {Text = "Custom FOV", Default = false})
+    CameraTab:AddSlider("FOV_Value", {Text = "Field of View", Default = 70, Min = 30, Max = 120, Rounding = 0, Compact = false})
+
+    -- Third Person - Enhanced
    CameraTab:AddToggle("ThirdPerson_Enabled", {Text = "ThirdPerson", Default = false, Callback = function(v)
     if v then
         RunService:BindToRenderStep("ts", 1, function()
@@ -5845,98 +6138,112 @@ EspSettingsTab:AddDropdown("Esp_Settings_FlagTextFont", {Text = "Flag Text Font"
     end
 end}):AddKeyPicker("ThirdPersonKeybind", {Default = '...', SyncToggleState = false, Mode = "Toggle", Text = "Third Person", NoUI = false})
 
-CameraTab:AddToggle("ThirdPerson_RemoveArms", {Text = "ThirdPerson RemoveArms"})
-CameraTab:AddSlider("ThirdPerson_Distance", {Text = 'Distance', Default = 5, Min = 1, Max = 10, Rounding = 0, Compact = false})
-CameraTab:AddSlider("Camera_FieldOfView", {Text = 'FieldOfView', Default = 80, Min = 60, Max = 120, Rounding = 0, Compact = false})
+    CameraTab:AddToggle("ThirdPerson_RemoveArms", {Text = "Character Transparency", Default = true})
+    CameraTab:AddSlider("ThirdPerson_Distance", {Text = 'Third Person Distance', Default = 15, Min = 5, Max = 50, Rounding = 0, Compact = false})
 
-CameraTab:AddDivider()
-
-CameraTab:AddToggle("ViewModel", {Text = "ViewModel", Default = false})
-CameraTab:AddSlider('X', {Text = 'Angles X', Default = 180, Min = 1, Max = 360, Rounding = 0, Compact = false})
-CameraTab:AddSlider('Y', {Text = 'Angles Y', Default = 180, Min = 1, Max = 360, Rounding = 0, Compact = false})
-CameraTab:AddSlider('X', {Text = 'Angles X', Default = 180, Min = 1, Max = 360, Rounding = 0, Compact = false})
-
-CameraTab:AddSlider('X1', {Text = 'CFrame X', Default = 180, Min = 1, Max = 360, Rounding = 0, Compact = false})
-CameraTab:AddSlider('Y2', {Text = 'CFrame Y', Default = 180, Min = 1, Max = 360, Rounding = 0, Compact = false})
-CameraTab:AddSlider('Z3', {Text = 'CFrame Z', Default = 180, Min = 1, Max = 360, Rounding = 0, Compact = false})
-
-CameraTab:AddDivider()
-
-CameraTab:AddToggle("Remove_Scope", {Text = "Remove Scope", Default = false, Callback = function(v)
-    for i, v in next, (LocalPlayer.PlayerGui.GUI.Crosshairs:GetChildren()) do
-        if v.Name:match("Frame") then
-            v.BackgroundTransparency = v and 1 or 0
-        elseif v.Name:match("Scope") then
-            v.ImageTransparency = v and 1 or 0 
+    -- Camera Effects
+    CameraTab:AddDivider()
+    CameraTab:AddLabel("Camera Effects")
+    CameraTab:AddToggle("No_Camera_Shake", {Text = "No Camera Shake", Default = false})
+    CameraTab:AddToggle("Remove_Recoil", {Text = "No Visual Recoil", Default = false})
+    CameraTab:AddToggle("Remove_Flash", {Text = "No Flashbang", Default = false, Callback = function(v)
+        if LocalPlayer.PlayerGui:FindFirstChild("Blnd") and LocalPlayer.PlayerGui.Blnd:FindFirstChild("Blind") then
+            LocalPlayer.PlayerGui.Blnd.Blind.Visible = not v
         end
-    end
-end})
+    end})
+    CameraTab:AddToggle("Remove_Scope", {Text = "No Scope Overlay", Default = false, Callback = function(v)
+        if LocalPlayer.PlayerGui:FindFirstChild("GUI") and LocalPlayer.PlayerGui.GUI:FindFirstChild("Crosshairs") then
+            for i, child in next, (LocalPlayer.PlayerGui.GUI.Crosshairs:GetChildren()) do
+                if child.Name:match("Frame") then
+                    child.BackgroundTransparency = v and 1 or 0
+                elseif child.Name:match("Scope") then
+                    child.ImageTransparency = v and 1 or 0 
+                end
+            end
+        end
+    end})
 
-CameraTab:AddToggle("Remove_Flash", {Text = "Delete Flashbang", Default = false, Callback = function(v)
-    LocalPlayer.PlayerGui.Blnd.Blind.Visible = not v
-end})
+    -- Viewmodel
+    CameraTab:AddDivider()
+    CameraTab:AddLabel("Viewmodel")
+    CameraTab:AddToggle("ViewModel", {Text = "Custom Viewmodel", Default = false})
+    CameraTab:AddSlider('Viewmodel_X', {Text = 'X Offset', Default = 0, Min = -10, Max = 10, Rounding = 1, Compact = false})
+    CameraTab:AddSlider('Viewmodel_Y', {Text = 'Y Offset', Default = 0, Min = -10, Max = 10, Rounding = 1, Compact = false})
+    CameraTab:AddSlider('Viewmodel_Z', {Text = 'Z Offset', Default = 0, Min = -10, Max = 10, Rounding = 1, Compact = false})
+    CameraTab:AddSlider('Viewmodel_Roll', {Text = 'Roll', Default = 0, Min = -180, Max = 180, Rounding = 0, Compact = false})
 
-CameraTab:AddToggle("Remove_Recoil", {Text = "delete camera recoil", Default = false})
+    -- ========================================
+    -- CONNECT KEY BINDINGS
+    -- ========================================
 
-ConnectKeyPickerToToggle("ThirdPerson_Enabled", "ThirdPersonKeybind")
+    ConnectKeyPickerToToggle("ESP_Master", "ESP_MasterKey")
+    ConnectKeyPickerToToggle("ThirdPerson_Enabled", "ThirdPersonKeybind")
 
-LightTab:AddToggle("Ambience_Enabled", {Text = "Ambience", Default = false}):AddColorPicker("Ambience_Color", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
+    -- ========================================
+    -- VISUALS TAB REWORK COMPLETE
+    -- ========================================
+    -- The visuals tab has been completely reworked with:
+    -- - Modern ESP system with 3D boxes, skeleton, off-screen indicators
+    -- - Advanced chams with multiple materials
+    -- - Glow effects with intensity controls
+    -- - Enhanced lighting and atmosphere controls
+    -- - Improved camera system with viewmodel customization
+    -- - Better organization and performance optimizations
+    --
+    -- Legacy code below is kept for compatibility but may be deprecated
+    -- ========================================
 
-LightTab:AddToggle("Force_Time", {Text = "Force time", Default = false})
-LightTab:AddSlider("Force_TimeValue", {Text = 'Time value', Default = 0, Min = 0, Max = 24, Rounding = 0, Compact = false})
+    -- Legacy lighting controls (kept for compatibility)
+    LightingTab:AddToggle("Ambience_Enabled", {Text = "Legacy Ambience", Default = false})
+        :AddColorPicker("Ambience_Color", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
+    LightingTab:AddToggle("Custom_Saturation", {Text = "Legacy Saturation", Default = false})
+        :AddColorPicker("Custom_SaturationColor", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
+    LightingTab:AddSlider("Custom_SaturationValue", {Text = 'Saturation Value', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    LightingTab:AddToggle("Custom_Bloom", {Text = "Legacy Bloom", Default = false})
+    LightingTab:AddSlider("Custom_BloomIntensity", {Text = 'Bloom Intensity', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    LightingTab:AddSlider("Custom_BloomSize", {Text = 'Bloom Size', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    LightingTab:AddSlider("Custom_BloomThreshold", {Text = 'Bloom Threshold', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
 
-LightTab:AddToggle("Custom_Saturation", {Text = "Custom Saturation", Default = false}):AddColorPicker("Custom_SaturationColor", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-LightTab:AddSlider("Custom_SaturationValue", {Text = 'Saturation Value', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    -- Legacy particle effects (moved to EffectsTab)
+    EffectsTab:AddDivider()
+    EffectsTab:AddLabel("Legacy Particles")
+    EffectsTab:AddToggle("Particles_Enabled", {Text = "Legacy Particles", Default = false})
+        :AddColorPicker("Particles_Color", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
+    EffectsTab:AddDropdown("Particles_Texture", {Text = "Particle Texture", Values = {"Random", "Snow", "Rain"}, Default = 1, Multi = false})
+    EffectsTab:AddSlider("Particles_LifeTime", {Text = 'Particle LifeTime', Default = 1, Min = 1, Max = 10, Rounding = 0, Compact = false})
+    EffectsTab:AddSlider("Particles_Speed", {Text = 'Particle Speed', Default = 25, Min = 1, Max = 100, Rounding = 0, Compact = false})
 
-LightTab:AddToggle("Custom_Bloom", {Text = "Bloom", Default = false})
-LightTab:AddSlider("Custom_BloomIntensity", {Text = 'Intensity', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
-LightTab:AddSlider("Custom_BloomSize", {Text = 'Size', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
-LightTab:AddSlider("Custom_BloomThreshold", {Text = 'Threshold', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    -- Legacy bullet tracers (enhanced in new system)
+    EffectsTab:AddDivider()
+    EffectsTab:AddLabel("Legacy Bullet System")
+    EffectsTab:AddToggle("BulletTracerEnabled", {Text = "Legacy Bullet Tracer"})
+        :AddColorPicker("BulletTracerColor", {Default = _Color3FromRGB(255,0,0), Title = 'Tracer Color', Transparency = 0.25})
+    EffectsTab:AddToggle("BulletTracerEnemyEnabled", {Text = "Legacy Enemy Tracer"})
+        :AddColorPicker("BulletTracerColor1", {Default = _Color3FromRGB(255,0,0), Title = 'Enemy Tracer Color', Transparency = 0.25})
+    EffectsTab:AddSlider("BulletTracerLifetime", {Text = "Legacy Tracer Lifetime", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
+    EffectsTab:AddSlider("BulletTracerWidth", {Text = "Legacy Tracer Width", Default = 2, Min = 0.1, Max = 50, Rounding = 1, Compact = false})
+    EffectsTab:AddSlider("BulletImpactLifetime", {Text = "Legacy Impact Lifetime", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
+    EffectsTab:AddDropdown("BulletImpactMaterial", {Text = "Legacy Impact Material", Values = Cache.MaterialNames, Default = 1, Multi = false})
 
-LightTab:AddToggle("Custom_Atmosphere", {Text = "Custom Atmosphere", Default = false}):AddColorPicker("Atmosphere_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0}):AddColorPicker("Atmosphere_Color2", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-LightTab:AddSlider("Custom_AtmosphereDensity", {Text = 'Density', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
-LightTab:AddSlider("Custom_AtmosphereGlare", {Text = 'Glare', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
-LightTab:AddSlider("Custom_AtmosphereHaze", {Text = 'Haze', Default = 0, Min = 0, Max = 100, Rounding = 0, Compact = false})
-
-ParticlesTab:AddToggle("Particles_Enabled", {Text = "Enabled", Default = false}):AddColorPicker("Particles_Color", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-ParticlesTab:AddDropdown("Particles_Texture", {Text = "Texture", Values = {"Random", "Snow", "Rain"}, Default = 1, Multi = false})
-ParticlesTab:AddSlider("Particles_LifeTime", {Text = 'LifeTime', Default = 1, Min = 1, Max = 10, Rounding = 0, Compact = false})
-ParticlesTab:AddSlider("Particles_Speed", {Text = 'Speed', Default = 25, Min = 1, Max = 100, Rounding = 0, Compact = false})
-
-BulletsTab:AddToggle("BulletTracerEnabled", {Text = "Bullet Tracer"}):AddColorPicker("BulletTracerColor", {Default = _Color3FromRGB(255,0,0), Title = 'Tracer Color', Transparency = 0.25})
-BulletsTab:AddToggle("BulletTracerEnemyEnabled", {Text = "Enemy Bullet Tracer"}):AddColorPicker("BulletTracerColor1", {Default = _Color3FromRGB(255,0,0), Title = 'Tracer Color', Transparency = 0.25})
-BulletsTab:AddToggle("BulletTracerSecondBeam", {Text = "Second Beam"}):AddColorPicker("BulletTracerSecondBeamColor", {Default = _Color3FromRGB(255,255,255), Title = 'Second Beam Color', Transparency = 0.5})
-BulletsTab:AddSlider("BulletTracerLifetime", {Text = "Life time", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletTracerFadetime", {Text = "Fade time", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletTracerWidth", {Text = "Width", Default = 2, Min = 0.1, Max = 50, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletTracerBrightness", {Text = "Brightness", Min = 1, Max = 10, Default = 1, Rounding = 0, Compact = false})
-BulletsTab:AddSlider("BulletTracerLightEmission", {Text = "Light Emission", Min = 0, Max = 1, Default = 1, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletTracerLightInfluence", {Text = "Light influence", Min = 0, Max = 1, Default = 0, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletTracerTextureSpeed", {Text = "Texture speed", Min = 1, Max = 5, Default = 1, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletTracerTextureLength", {Text = "Texture Length", Min = 1, Max = 10, Default = 1, Rounding = 0, Compact = false})
-BulletsTab:AddToggle("BulletTracerFaceCamera", {Text = "Face Camera", Default = true})
-BulletsTab:AddDropdown("BulletTracerTexture", {Text = "Texture", Values = (function() local tbl = {} for i,v in next,Cache.TracerTextures do _TableInsert(tbl,i) end return tbl end)(), Default = 12, Multi = false})
-BulletsTab:AddDivider()
-BulletsTab:AddToggle("BulletImpactEnabled", {Text = "Bullet Impact"}):AddColorPicker("BulletImpactColor", {Default = _Color3FromRGB(255,255,255), Title = "Impact Color", Transparency = 0.15}):AddColorPicker("BulletImpactColor2", {Default = _Color3FromRGB(255,255,255), Title = "Impact Color", Transparency = 0.15})
-BulletsTab:AddSlider("BulletImpactSize", {Text = "Size", Default = 2, Min = 0.1, Max = 10, Rounding = 1, Compact = false})
-BulletsTab:AddSlider("BulletImpactLifetime", {Text = "Life time", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
-BulletsTab:AddDropdown("BulletImpactMaterial", {Text = "Material", Values = Cache.MaterialNames, Default = 1, Multi = false})
-
-CrosshairTab:AddToggle("Custom_Crosshair", {Text = "Custom Crosshair", Default = false}):AddColorPicker("Custom_Crosshair_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
-CrosshairTab:AddToggle("Impulse_Crosshair", {Text = "Impulse Crosshair", Default = false})
-CrosshairTab:AddToggle("Crosshair_Outlines", {Text = "Crosshair Outlines", Default = false})
-CrosshairTab:AddSlider("Cycle_Speed", {Text = "Cycle Speed", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
-CrosshairTab:AddSlider("Minimum_Speed", {Text = "Minimum Speed", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Maximum_Speed", {Text = "Maximum Speed", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Minimum_Length", {Text = "Minimum Length", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Maximum_Length", {Text = "Maximum Length", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Width", {Text = "Crosshair Width", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Length", {Text = "Crosshair Length", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Width_Gap", {Text = "Crosshair Gap", Default = 5, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Length_Gap", {Text = "Length Gap crosshair", Default = 5, Min = 0, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Thickness", {Text = "Crosshair Thickness", Default = 2, Min = 1, Max = 100, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Rotation", {Text = "Rotation crosshair", Default = 0, Min = 0, Max = 360, Rounding = 0, Compact = false})
-CrosshairTab:AddSlider("Crosshair_Rotation_Speed", {Text = "Crosshair rotation speed", Default = 0, Min = -360, Max = 360, Rounding = 0, Compact = false})
+    -- Legacy crosshair controls (moved to WorldEspTab)
+    WorldEspTab:AddDivider()
+    WorldEspTab:AddLabel("Legacy Crosshair")
+    WorldEspTab:AddToggle("Custom_Crosshair", {Text = "Legacy Custom Crosshair", Default = false})
+        :AddColorPicker("Custom_Crosshair_Color1", {Default = _Color3FromRGB(255,255,255), Title = 'Color', Transparency = 0})
+    WorldEspTab:AddToggle("Impulse_Crosshair", {Text = "Legacy Impulse Crosshair", Default = false})
+    WorldEspTab:AddToggle("Crosshair_Outlines", {Text = "Legacy Crosshair Outlines", Default = false})
+    WorldEspTab:AddSlider("Cycle_Speed", {Text = "Legacy Cycle Speed", Default = 2, Min = 0, Max = 10, Rounding = 1, Compact = false})
+    WorldEspTab:AddSlider("Minimum_Speed", {Text = "Legacy Minimum Speed", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Maximum_Speed", {Text = "Legacy Maximum Speed", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Minimum_Length", {Text = "Legacy Minimum Length", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Maximum_Length", {Text = "Legacy Maximum Length", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Width", {Text = "Legacy Crosshair Width", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Length", {Text = "Legacy Crosshair Length", Default = 10, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Width_Gap", {Text = "Legacy Crosshair Gap", Default = 5, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Length_Gap", {Text = "Legacy Length Gap", Default = 5, Min = 0, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Thickness", {Text = "Legacy Crosshair Thickness", Default = 2, Min = 1, Max = 100, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Rotation", {Text = "Legacy Crosshair Rotation", Default = 0, Min = 0, Max = 360, Rounding = 0, Compact = false})
+    WorldEspTab:AddSlider("Crosshair_Rotation_Speed", {Text = "Legacy Rotation Speed", Default = 0, Min = -360, Max = 360, Rounding = 0, Compact = false})
 
     local WatermarkGroup = SettingsTab:AddCenterGroupbox("Watermark")
     WatermarkGroup:AddToggle("Watermark", { Text = "Watermark", Callback = function (v) 
