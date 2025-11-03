@@ -5533,6 +5533,7 @@ do
 
 local MiscTab = Window:AddTab("Misc")
 local VisualsTab = Window:AddTab("Visuals")
+local TestingTab = Window:AddTab("TESTING")
 local SettingsTab = Window:AddTab("Settings")
 --
 local RageBotGroup = RageTab:AddLeftGroupbox("Main")
@@ -5683,6 +5684,51 @@ ExploitsGroup:AddToggle("Remove_Spread", {Text = "No-spread"})
 
 
     ConnectKeyPickerToToggle("Movement_OverrideSpeedHack", "OverrideSpeedHackKeyBind")
+
+    -- ========================================
+    -- AURORA TESTING TAB - ADVANCED FEATURES
+    -- ========================================
+    -- Auto snap, 360 view, auto lock, visibility checks
+    -- Advanced camera and targeting testing features
+    
+    local TestingMainGroup = TestingTab:AddLeftGroupbox("Auto Snap")
+    local TestingCameraGroup = TestingTab:AddCenterGroupbox("Camera Controls")
+    local TestingTargetGroup = TestingTab:AddRightGroupbox("Target Tracking")
+    
+    -- Auto Snap Features
+    TestingMainGroup:AddToggle("Testing_AutoSnap", {Text = "Auto Snap"})
+        :AddKeyPicker("AutoSnapKeyBind", {Default = '...', SyncToggleState = false, Mode = "Toggle", Text = "Auto Snap", NoUI = false})
+    
+    TestingMainGroup:AddToggle("Testing_AutoCrouch", {Text = "Auto Crouch on Snap"})
+    TestingMainGroup:AddToggle("Testing_AutoShoot", {Text = "Auto Shoot on Snap"})
+    TestingMainGroup:AddSlider("Testing_SnapSpeed", {Text = "Snap Speed", Default = 5, Min = 1, Max = 20, Rounding = 1, Compact = false})
+    TestingMainGroup:AddSlider("Testing_SnapFOV", {Text = "Snap FOV", Default = 180, Min = 90, Max = 360, Rounding = 0, Compact = false})
+    
+    ConnectKeyPickerToToggle("Testing_AutoSnap", "AutoSnapKeyBind")
+    
+    -- Camera Controls
+    TestingCameraGroup:AddToggle("Testing_360View", {Text = "360° View"})
+        :AddKeyPicker("360ViewKeyBind", {Default = '...', SyncToggleState = false, Mode = "Toggle", Text = "360° View", NoUI = false})
+    
+    TestingCameraGroup:AddSlider("Testing_360Speed", {Text = "360° Speed", Default = 2, Min = 0.5, Max = 10, Rounding = 1, Compact = false})
+    TestingCameraGroup:AddDropdown("Testing_360Mode", {Text = "360° Mode", Values = {"Smooth", "Instant", "Oscillate"}, Default = "Smooth", AllowNull = false})
+    TestingCameraGroup:AddToggle("Testing_CameraSmoothing", {Text = "Camera Smoothing"})
+    TestingCameraGroup:AddSlider("Testing_SmoothFactor", {Text = "Smooth Factor", Default = 0.1, Min = 0.01, Max = 1, Rounding = 2, Compact = false})
+    
+    ConnectKeyPickerToToggle("Testing_360View", "360ViewKeyBind")
+    
+    -- Target Tracking
+    TestingTargetGroup:AddToggle("Testing_AutoLock", {Text = "Auto Lock"})
+        :AddKeyPicker("AutoLockKeyBind", {Default = '...', SyncToggleState = false, Mode = "Toggle", Text = "Auto Lock", NoUI = false})
+    
+    TestingTargetGroup:AddToggle("Testing_VisibilityCheck", {Text = "Visibility Check"})
+    TestingTargetGroup:AddToggle("Testing_WallCheck", {Text = "Wall Check"})
+    TestingTargetGroup:AddSlider("Testing_LockRange", {Text = "Lock Range", Default = 500, Min = 100, Max = 2000, Rounding = 0, Compact = false})
+    TestingTargetGroup:AddDropdown("Testing_TargetPriority", {Text = "Target Priority", Values = {"Closest", "Lowest Health", "Highest Threat", "Random"}, Default = "Closest", AllowNull = false})
+    TestingTargetGroup:AddToggle("Testing_PredictMovement", {Text = "Predict Movement"})
+    TestingTargetGroup:AddSlider("Testing_PredictionTime", {Text = "Prediction Time", Default = 0.2, Min = 0.1, Max = 1, Rounding = 2, Compact = false})
+    
+    ConnectKeyPickerToToggle("Testing_AutoLock", "AutoLockKeyBind")
 
     -- ========================================
     -- AURORA VISUALS TAB - COMPLETE REWORK
@@ -9951,6 +9997,324 @@ do  -- Signals !
         end
     end)
 end
+
+-- ========================================
+-- AURORA TESTING SYSTEM - IMPLEMENTATION
+-- ========================================
+-- Advanced testing features with auto snap, 360 view, auto lock, and visibility checks
+
+do -- Testing System
+    local TestingSystem = {
+        CurrentTarget = nil,
+        LockedTarget = nil,
+        LastSnapTime = 0,
+        SnapCooldown = 0.1,
+        Camera360Angle = 0,
+        OriginalCameraCFrame = nil,
+        IsSnapping = false,
+        LastVisibilityCheck = 0,
+        VisibilityCache = {}
+    }
+    
+    -- Helper function to get closest enemy behind player
+    local function GetEnemyBehind()
+        if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            return nil
+        end
+        
+        local playerRoot = LocalPlayer.Character.HumanoidRootPart
+        local playerPos = playerRoot.Position
+        local playerLook = playerRoot.CFrame.LookVector
+        
+        local closestEnemy = nil
+        local closestDistance = math.huge
+        
+        for _, player in pairs(Players:GetPlayers()) do
+            if player == LocalPlayer or not player.Character then continue end
+            
+            local enemyRoot = player.Character:FindFirstChild("HumanoidRootPart")
+            local enemyHumanoid = player.Character:FindFirstChild("Humanoid")
+            
+            if not enemyRoot or not enemyHumanoid or enemyHumanoid.Health <= 0 then continue end
+            
+            local enemyPos = enemyRoot.Position
+            local directionToEnemy = (enemyPos - playerPos).Unit
+            
+            -- Check if enemy is behind (dot product < 0 means behind)
+            local dotProduct = playerLook:Dot(directionToEnemy)
+            if dotProduct >= -0.5 then continue end -- Not behind enough
+            
+            local distance = (enemyPos - playerPos).Magnitude
+            if distance > Flags.Testing_LockRange then continue end
+            
+            -- Check FOV if enabled
+            if Flags.Testing_SnapFOV < 360 then
+                local angle = math.deg(math.acos(math.abs(dotProduct)))
+                if angle > Flags.Testing_SnapFOV / 2 then continue end
+            end
+            
+            if distance < closestDistance then
+                closestDistance = distance
+                closestEnemy = player
+            end
+        end
+        
+        return closestEnemy
+    end
+    
+    -- Enhanced visibility check with wall detection
+    local function IsEnemyVisible(enemy)
+        if not enemy or not enemy.Character then return false end
+        
+        local now = _Tick()
+        local cacheKey = enemy.Name
+        
+        -- Use cached result if recent
+        if TestingSystem.VisibilityCache[cacheKey] and 
+           now - TestingSystem.LastVisibilityCheck < 0.1 then
+            return TestingSystem.VisibilityCache[cacheKey]
+        end
+        
+        local playerChar = LocalPlayer.Character
+        if not playerChar or not playerChar:FindFirstChild("Head") then return false end
+        
+        local enemyChar = enemy.Character
+        local enemyHead = enemyChar:FindFirstChild("Head")
+        local enemyRoot = enemyChar:FindFirstChild("HumanoidRootPart")
+        
+        if not enemyHead or not enemyRoot then return false end
+        
+        local playerHead = playerChar.Head
+        local origin = playerHead.Position
+        local target = enemyHead.Position
+        
+        -- Raycast for visibility
+        local rayDirection = (target - origin)
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+        raycastParams.FilterDescendantsInstances = {playerChar, enemyChar, workspace.Ray_Ignore, workspace.Debris}
+        
+        local raycastResult = workspace:Raycast(origin, rayDirection, raycastParams)
+        
+        local isVisible = not raycastResult
+        
+        -- Wall check - additional raycast to torso
+        if Flags.Testing_WallCheck and isVisible then
+            local torsoTarget = enemyRoot.Position
+            local torsoDirection = (torsoTarget - origin)
+            local torsoResult = workspace:Raycast(origin, torsoDirection, raycastParams)
+            isVisible = isVisible and not torsoResult
+        end
+        
+        -- Cache result
+        TestingSystem.VisibilityCache[cacheKey] = isVisible
+        TestingSystem.LastVisibilityCheck = now
+        
+        return isVisible
+    end
+    
+    -- Get target based on priority
+    local function GetTargetByPriority()
+        local targets = {}
+        
+        for _, player in pairs(Players:GetPlayers()) do
+            if player == LocalPlayer or not player.Character then continue end
+            
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            local root = player.Character:FindFirstChild("HumanoidRootPart")
+            
+            if not humanoid or not root or humanoid.Health <= 0 then continue end
+            
+            local distance = (root.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+            if distance > Flags.Testing_LockRange then continue end
+            
+            -- Visibility check if enabled
+            if Flags.Testing_VisibilityCheck and not IsEnemyVisible(player) then continue end
+            
+            table.insert(targets, {
+                player = player,
+                distance = distance,
+                health = humanoid.Health,
+                threat = distance < 100 and humanoid.Health > 50 and 1 or 0
+            })
+        end
+        
+        if #targets == 0 then return nil end
+        
+        -- Sort by priority
+        local priority = Flags.Testing_TargetPriority
+        if priority == "Closest" then
+            table.sort(targets, function(a, b) return a.distance < b.distance end)
+        elseif priority == "Lowest Health" then
+            table.sort(targets, function(a, b) return a.health < b.health end)
+        elseif priority == "Highest Threat" then
+            table.sort(targets, function(a, b) return a.threat > b.threat end)
+        elseif priority == "Random" then
+            return targets[math.random(#targets)].player
+        end
+        
+        return targets[1].player
+    end
+    
+    -- Smooth camera movement
+    local function SmoothLookAt(targetPosition, speed)
+        if not camera then return end
+        
+        local currentCFrame = camera.CFrame
+        local targetCFrame = CFrame.lookAt(currentCFrame.Position, targetPosition)
+        
+        if Flags.Testing_CameraSmoothing then
+            local smoothFactor = Flags.Testing_SmoothFactor
+            camera.CFrame = currentCFrame:Lerp(targetCFrame, smoothFactor)
+        else
+            camera.CFrame = targetCFrame
+        end
+    end
+    
+    -- Predict enemy movement
+    local function PredictEnemyPosition(enemy)
+        if not Flags.Testing_PredictMovement or not enemy.Character then
+            return enemy.Character.HumanoidRootPart.Position
+        end
+        
+        local root = enemy.Character.HumanoidRootPart
+        local humanoid = enemy.Character.Humanoid
+        
+        local velocity = root.Velocity
+        local predictionTime = Flags.Testing_PredictionTime
+        
+        return root.Position + (velocity * predictionTime)
+    end
+    
+    -- Auto crouch function
+    local function AutoCrouch()
+        if not Flags.Testing_AutoCrouch then return end
+        
+        local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.Sit = true
+            task.wait(0.1)
+            humanoid.Sit = false
+        end
+    end
+    
+    -- Auto shoot function
+    local function AutoShoot()
+        if not Flags.Testing_AutoShoot then return end
+        
+        -- Simulate mouse click for shooting
+        if Mouse then
+            Mouse.Button1Down:Fire()
+            task.wait(0.05)
+            Mouse.Button1Up:Fire()
+        end
+    end
+    
+    -- 360 degree view system
+    local function Update360View(deltaTime)
+        if not Flags.Testing_360View or not camera then return end
+        
+        local speed = Flags.Testing_360Speed
+        local mode = Flags.Testing_360Mode
+        
+        if mode == "Smooth" then
+            TestingSystem.Camera360Angle = TestingSystem.Camera360Angle + (speed * deltaTime * 60)
+            if TestingSystem.Camera360Angle >= 360 then
+                TestingSystem.Camera360Angle = 0
+            end
+        elseif mode == "Instant" then
+            TestingSystem.Camera360Angle = (TestingSystem.Camera360Angle + (speed * 10)) % 360
+        elseif mode == "Oscillate" then
+            TestingSystem.Camera360Angle = math.sin(_Tick() * speed) * 180
+        end
+        
+        if not TestingSystem.OriginalCameraCFrame then
+            TestingSystem.OriginalCameraCFrame = camera.CFrame
+        end
+        
+        local yRotation = math.rad(TestingSystem.Camera360Angle)
+        local rotatedCFrame = TestingSystem.OriginalCameraCFrame * CFrame.Angles(0, yRotation, 0)
+        camera.CFrame = rotatedCFrame
+    end
+    
+    -- Main testing system loop
+    RunService.RenderStepped:Connect(function(deltaTime)
+        ErrorHandler.SafeCall(function()
+            local now = _Tick()
+            
+            -- Update 360 view
+            if Flags.Testing_360View then
+                Update360View(deltaTime)
+            else
+                TestingSystem.OriginalCameraCFrame = nil
+                TestingSystem.Camera360Angle = 0
+            end
+            
+            -- Auto snap system
+            if Flags.Testing_AutoSnap and now - TestingSystem.LastSnapTime > TestingSystem.SnapCooldown then
+                local enemyBehind = GetEnemyBehind()
+                
+                if enemyBehind and enemyBehind.Character and enemyBehind.Character:FindFirstChild("HumanoidRootPart") then
+                    TestingSystem.IsSnapping = true
+                    TestingSystem.CurrentTarget = enemyBehind
+                    
+                    local targetPos = PredictEnemyPosition(enemyBehind)
+                    SmoothLookAt(targetPos, Flags.Testing_SnapSpeed)
+                    
+                    -- Auto actions on snap
+                    AutoCrouch()
+                    AutoShoot()
+                    
+                    TestingSystem.LastSnapTime = now
+                end
+            end
+            
+            -- Auto lock system
+            if Flags.Testing_AutoLock then
+                if not TestingSystem.LockedTarget or 
+                   not TestingSystem.LockedTarget.Character or 
+                   not TestingSystem.LockedTarget.Character:FindFirstChild("HumanoidRootPart") then
+                    
+                    -- Find new target
+                    TestingSystem.LockedTarget = GetTargetByPriority()
+                end
+                
+                if TestingSystem.LockedTarget and TestingSystem.LockedTarget.Character then
+                    local targetPos = PredictEnemyPosition(TestingSystem.LockedTarget)
+                    SmoothLookAt(targetPos, Flags.Testing_SnapSpeed)
+                end
+            else
+                TestingSystem.LockedTarget = nil
+            end
+            
+            -- Clear snapping state
+            if not Flags.Testing_AutoSnap then
+                TestingSystem.IsSnapping = false
+                TestingSystem.CurrentTarget = nil
+            end
+        end)
+    end)
+    
+    -- Input handling for manual controls
+    if InputService then
+        InputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            
+            -- Manual snap trigger (can be bound to key)
+            if input.KeyCode == Enum.KeyCode.T and Flags.Testing_AutoSnap then
+                local enemyBehind = GetEnemyBehind()
+                if enemyBehind then
+                    TestingSystem.CurrentTarget = enemyBehind
+                    local targetPos = PredictEnemyPosition(enemyBehind)
+                    SmoothLookAt(targetPos, Flags.Testing_SnapSpeed * 2) -- Faster manual snap
+                    AutoCrouch()
+                    AutoShoot()
+                end
+            end
+        end)
+    end
+end
+
 CoreGui.Parent = gethui() or cloneref(LocalPlayer.PlayerGui)
 -- CoreGui.Parent = cloneref(LocalPlayer.PlayerGui)
 Library:Notify("".._tostring(_Tick() - LoadTick))
